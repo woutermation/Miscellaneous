@@ -1,4 +1,5 @@
-﻿Function Read-FolderSize {
+﻿Function Read-FolderSize
+{
     <#
     .SYNOPSIS
         Read the size of folders
@@ -42,10 +43,15 @@
                    ValueFromPipelineByPropertyName=$true)]
         [string]$subFolders = $true
     )
-    Begin {
+    Begin
+    {
     }
-    Process {
-        Try {
+    
+    
+    Process
+    {
+        Try
+        {
             $ErrorActionPreference = "Stop"
             $folderSize            = ((Get-ChildItem $Folder -Recurse | Measure-Object -Property Length -Sum).Sum)
             [pscustomobject]@{
@@ -53,9 +59,11 @@
                 SizeMb = "{0:N2}" -f ($folderSize / 1MB)
                 SizeGb = "{0:N2}" -f ($folderSize / 1GB)
             }
-            if ($subFolders -eq $true) {
+            if ($subFolders -eq $true)
+            {
                 $colItems = (Get-ChildItem $Folder -Recurse | Where-Object {$_.PSIsContainer -eq $True} | Sort-Object)
-                foreach ($i in $colItems) {
+                foreach ($i in $colItems)
+                {
                     $subFolderSize = ((Get-ChildItem $($i.FullName) -Recurse | where { $_.Length > 0 } | Measure-Object -Property Length -Sum).Sum)
                     [pscustomobject]@{
                         Folder = "$($i.FullName)"
@@ -65,11 +73,15 @@
                 }
             }
         }
-        Catch {
+        Catch
+        {
             Write-Output $_.Exception.Message
         }
     }
-    End {
+
+
+    End
+    {
         Remove-Variable subFolderSize, colItems, Folder, folderSize, subFolders
     }
 } #end Function Read-FolderSize
